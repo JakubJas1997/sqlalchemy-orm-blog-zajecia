@@ -1,3 +1,5 @@
+import random
+
 from faker import Faker
 from sqlalchemy.exc import IntegrityError
 
@@ -34,37 +36,42 @@ def generate_articles(session, count=10):
 
 def generate_hashtags(session, count=10):
     fake = Faker()
-    for article in session.query(Article):
-        hashtags = [
-            Hashtag(name=fake.word())
-            for _ in range(count)
-        ]
-        article.hashtags.extend(hashtags)
+    total_hashtags = 0
+    while total_hashtags < count:
+        hashtag = Hashtag(name=fake.word())
         try:
-            session.commit()
+            session.add(hashtag)
+            total_hashtags += 1
         except IntegrityError:
             session.rollback()
-            continue
+
+
+def assign_hashtags(session):
+    all_hashtags = session.query(Hashtag).all()
+    for article in session.query(Article):
+        hashtags = random.choices(
+            all_hashtags, k=random.randint(1, 5)
+        )
+        article.hashtags.extend(set(hashtags))
+    session.commit()
 
 
 def main():
     print("Creating database tables...")
-
-    # Create database tables
     Base.metadata.create_all()
 
     print("Generating authors...")
 
-    # Generate authors
     generate_authors(session)
 
     print("Generating articles...")
-    # Generate articles
     generate_articles(session)
 
     print("Generating hashtags...")
-    # Generate hashtags
     generate_hashtags(session)
+
+    print("Assigning hashtags to articles...")
+    assign_hashtags(session)
 
     print("Done!")
 

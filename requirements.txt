@@ -3,6 +3,7 @@ cryptography==40.0.2
 Faker==18.7.0
 greenlet==2.0.2
 importlib-metadata==6.6.0
+psycopg2-binary==2.9.6
 pycparser==2.21
 PyMySQL==1.0.3
 python-dateutil==2.8.2

@@ -4,7 +4,7 @@ from faker import Faker
 
 
 def main():
-    author = session.query(Author).get(7)
+    author = session.query(Author).get(4)
 
     fake = Faker()
     article = Article(
